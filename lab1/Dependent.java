@@ -1,3 +1,5 @@
+package lab1;
+
 public class Dependent extends Person {
 
     public Dependent(int id, String name){
