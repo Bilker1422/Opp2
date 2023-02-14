@@ -1,0 +1,72 @@
+
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class login extends JFrame {
+    JButton login = new JButton("Login");
+    JButton cancal = new JButton("Cancal");
+    JTextField userName = new JTextField("Enter Your Username : ",20);
+    JPasswordField pwd = new JPasswordField("Enter Your Username :",20)  ;
+    JLabel title = new JLabel("Login From");
+    public login(){
+
+        super("Login");
+        setSize(300,200);
+        setLayout(new FlowLayout());
+        add(title);
+        add(userName);
+        add(pwd);
+        add(login);
+        add(cancal);
+        cancal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+        login.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String sql = "SELECT * FROM testaaaa WHERE username = ?";
+                try{
+                    Connection con = new postgres().getConnection();
+                    PreparedStatement preparedStatement = con.prepareStatement(sql);
+                    preparedStatement.setString(1,userName.getText());
+                    System.out.println(userName.getText());
+//                    preparedStatement.setString(2,pwd.getPassword().toString());
+                    System.out.println(pwd.getText());
+                    ResultSet s = preparedStatement.executeQuery();
+                    dispose();
+                    if(s.next()){
+                        if(s.getString("pwd").equals(pwd.getText())){
+                            JOptionPane.showMessageDialog(null,"Confirmtion","Confirmtion", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                        else {
+                            JOptionPane.showMessageDialog(null,"Oh it look like your Password is wrong","Error", JOptionPane.ERROR_MESSAGE);
+
+                        }
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null,"Oh it look like your Username is wrong","Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    s.close();
+                    preparedStatement.close();
+                    con.close();
+                    window w = new window();
+                    w.start(w);
+                }catch(SQLException x){
+                    System.out.println(x);
+                }
+            }
+        });
+    }
+
+
+}
